@@ -60,14 +60,7 @@ void desenha_tela(char tela[ALTURA][LARGURA])
 	{
 		for (j = 0; j < LARGURA; j++)
 		{
-			/*if (tela[i][j] == 'o')
-			{
-				printf(" ");
-			}
-			else
-			{*/
-				printf("%c", tela[i][j]);
-			//}
+			printf("%c", tela[i][j]);
 		}
 		printf("\n");
 	}
