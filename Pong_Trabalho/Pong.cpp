@@ -30,12 +30,12 @@ typedef struct bola {
 }Bola;
 
 typedef struct raquete1 {
-	int x, y, z;
+	int centro, topo, base;
 	Direcao raq1;
 }Raquete1;
 
 typedef struct raquete2 {
-	int x, y, z;
+	int centro, topo, base;
 	direcao raq2;
 }Raquete2;
 
@@ -46,7 +46,10 @@ void movBall_down(char tela[ALTURA][LARGURA], Bola *b);
 void movBall_right(char tela[ALTURA][LARGURA], Bola *b);
 void moveBall_left(char tela[ALTURA][LARGURA], Bola *b);
 void move_ball(char tela[ALTURA][LARGURA], Bola *b);
-void movRaquete1(char tela[ALTURA][LARGURA], Raquete1 *r1, int direcao_raquete1);
+void movRaquete1_up(char tela[ALTURA][LARGURA], Raquete1 *r1);
+void movRaquete1_down(char tela[ALTURA][LARGURA], Raquete1 *r1);
+void dirBall(Bola *b, int direcao_bola);
+void dirRaquete1(char tela[ALTURA][LARGURA], Raquete1 *r1, int dir);
 
 int main()
 {
@@ -56,18 +59,22 @@ int main()
 	Raquete1 r1;
 	Raquete2 r2;
 	int direcao_raquete1, direcao_raquete2;
+	int direcao_bola;
 
 	inicia(tela, &b, &r1, &r2);
 
-	while (1) 
+	while (10) 
 	{
 		limpa_tela();
 		desenha_tela(tela);
 		if (_kbhit())
 		{
+			direcao_bola = _getch();
+			dirBall(&b, direcao_bola);
 			direcao_raquete1 = _getch();
-			movRaquete1(tela, &r1, direcao_raquete1);
+			dirRaquete1(tela, &r1, direcao_raquete1);
 		}
+		move_ball(tela, &b);
 		dorme(1);
 	}
 
@@ -126,6 +133,7 @@ void inicia(char tela[ALTURA][LARGURA], Bola *b, Raquete1 *r1, Raquete2 *r2)
 	b->y = j;
 	srand(time(NULL));
 		b->d = rand() % ESQUERDA;
+	//b->n = SOBE;
 
 	i = (ALTURA / 2);
 	j = (ALTURA / 2) - 1;
@@ -133,9 +141,9 @@ void inicia(char tela[ALTURA][LARGURA], Bola *b, Raquete1 *r1, Raquete2 *r2)
 	tela[i][LARGURA - 2] = RAQUETE;
 	tela[j][LARGURA - 2] = RAQUETE;
 	tela[k][LARGURA - 2] = RAQUETE;
-	r1->x = i;
-	r1->y = j;
-	r1->z = k;
+	r1->centro = i;
+	r1->topo = j;
+	r1->base = k;
 
 	i = (ALTURA / 2);
 	j = (ALTURA / 2) - 1;
@@ -143,9 +151,9 @@ void inicia(char tela[ALTURA][LARGURA], Bola *b, Raquete1 *r1, Raquete2 *r2)
 	tela[i][1] = RAQUETE;
 	tela[j][1] = RAQUETE;
 	tela[k][1] = RAQUETE;
-	r2->x = i;
-	r2->y = j;
-	r2->z = k;
+	r2->centro = i;
+	r2->topo = j;
+	r2->base = k;
 }
 
 void movBall_up(char tela[ALTURA][LARGURA], Bola *b)
@@ -165,14 +173,14 @@ void movBall_down(char tela[ALTURA][LARGURA], Bola *b)
 void movBall_right(char tela[ALTURA][LARGURA], Bola *b)
 {
 	tela[b->x][b->y] = ESPACO;
-	b->y--;
+	b->y++;
 	tela[b->x][b->y] = BOLA;
 }
 
 void movBall_left(char tela[ALTURA][LARGURA], Bola *b)
 {
 	tela[b->x][b->y] = ESPACO;
-	b->y++;
+	b->y--;
 	tela[b->x][b->y] = BOLA;
 }
 
@@ -193,7 +201,7 @@ void move_ball(char tela[ALTURA][LARGURA], Bola *b)
 	}
 	else if (b->n == DESCE)
 	{
-		if (b->x < ALTURA - 1)
+		if (b->x < ALTURA - 2)
 		{
 			movBall_down(tela, b);
 		}
@@ -203,13 +211,91 @@ void move_ball(char tela[ALTURA][LARGURA], Bola *b)
 			movBall_up(tela, b);
 		}
 	}
+	else if (b->n == DIREITA)
+	{
+		if (b->y < LARGURA - 3)
+		{
+			movBall_right(tela, b);
+		}
+		else
+		{
+			b->n = ESQUERDA;
+			movBall_left(tela, b);
+		}
+	}
+	else if (b->n == ESQUERDA)
+	{
+		if (b->y > 3)
+		{
+			movBall_left(tela, b);
+		}
+		else
+		{
+			b->n = DIREITA;
+			movBall_right(tela, b);
+		}
+	}
 }
 
-void movRaquete1 (char tela[ALTURA][LARGURA],Raquete1 *r1, int direcao_raquete1)
+void dirBall(Bola *b, int direcao_bola)
 {
-	if (direcao_raquete1 = 'a')
+	if (direcao_bola == 'a')
 	{
-		tela[r1->x][r1->z] = ESPACO;
-		tela[r1->y + 1][1] = RAQUETE;
+		b->n = ESQUERDA;
+	}
+	else if (direcao_bola == 'w')
+	{
+		b->n = SOBE;
+	}
+	else if (direcao_bola == 'd')
+	{
+		b->n = DIREITA;
+	}
+	else if (direcao_bola == 's')
+	{
+		b->n = DESCE;
+	}
+}
+
+void movRaquete1_up(char tela[ALTURA][LARGURA], Raquete1 *r1)
+{
+	tela[r1->base][LARGURA - 2] = ESPACO;
+	r1->topo--;
+	r1->centro--;
+	r1->base--;
+	tela[r1->topo][LARGURA - 2] = RAQUETE;
+	tela[r1->centro][LARGURA - 2] = RAQUETE;
+	tela[r1->topo][LARGURA - 2] = RAQUETE;
+}
+
+void movRaquete1_down(char tela[ALTURA][LARGURA], Raquete1 *r1)
+{
+	
+	tela[r1->topo][LARGURA - 2] = ESPACO;
+	r1->topo++;
+	r1->centro++;
+	r1->base++;
+	tela[r1->base][LARGURA - 2] = RAQUETE;
+	tela[r1->centro][LARGURA - 2] = RAQUETE;
+	tela[r1->base][LARGURA - 2] = RAQUETE;
+}
+
+void dirRaquete1(char tela[ALTURA][LARGURA], Raquete1 *r1, int dir)
+{
+	if (dir == 'k')
+	{
+		r1->raq1 = SOBE;
+		if (tela[r1->topo][LARGURA - 2] != tela[1][LARGURA - 2])
+		{
+			movRaquete1_up(tela, r1);
+		}
+	}
+	else if (dir == 'm')
+	{
+		r1->raq1 = DESCE;
+		if (tela[r1->base][LARGURA - 2] != tela[ALTURA - 2][LARGURA - 2])
+		{
+			movRaquete1_down(tela, r1);
+		}
 	}
 }
