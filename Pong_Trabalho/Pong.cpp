@@ -1,6 +1,5 @@
 #include <stdlib.h>
 #include <conio.h>
-#include <time.h>
 #include <Windows.h>
 #include <stdio.h>
 
@@ -62,7 +61,7 @@ void movBall_right_up(char tela[ALTURA][LARGURA], Bola *b);
 void move_ball(char tela[ALTURA][LARGURA], Bola *b, Raquete1 *r1, Raquete2 *r2);
 void movRaquete1_up(char tela[ALTURA][LARGURA], Raquete1 *r1);
 void movRaquete1_down(char tela[ALTURA][LARGURA], Raquete1 *r1);
-void dirRaquetes(char tela[ALTURA][LARGURA], Raquete1 *r1, int dir1, int dir2, Raquete2 *r2);
+void dirRaquetes(char tela[ALTURA][LARGURA], Raquete1 *r1, int dir, Raquete2 *r2);
 void movRaquete2_up(char tela[ALTURA][LARGURA], Raquete2 *r2);
 void movRaquete2_down(char tela[ALTURA][LARGURA], Raquete2 *r2);
 
@@ -72,22 +71,20 @@ int main(void)
 	Bola b;
 	Raquete1 r1;
 	Raquete2 r2;
-	int dir1, dir2;
+	int dir;
 
 	inicia(tela, &b, &r1, &r2);
-
+	
 	while (1) 
 	{
 		limpa_tela();
 		desenha_tela(tela);
 		if (_kbhit())
 		{
-			dir1 = _getch();
-			dir2 = _getch();
-			dirRaquetes(tela, &r1, dir1, dir2, &r2);
+			dir = _getch();
+			dirRaquetes(tela, &r1, dir, &r2);
 		}
 		move_ball(tela, &b, &r1, &r2);
-		dorme(1);
 	}
 
 	return 0;
@@ -278,7 +275,11 @@ void move_ball(char tela[ALTURA][LARGURA], Bola *b, Raquete1 *r1, Raquete2 *r2)
 	}
 	else if (b->n == ESQUERDA_SOBE)
 	{
-		if (b->x > 1)
+		if (tela[b->x][b->y] == tela[0][ALTURA])
+		{
+			main();
+		}
+		else if (b->x > 1)
 		{
 			movBall_left_up(tela, b);
 		}
@@ -302,14 +303,14 @@ void move_ball(char tela[ALTURA][LARGURA], Bola *b, Raquete1 *r1, Raquete2 *r2)
 			b->n = DIREITA_DESCE;
 			movBall_right_down(tela, b);
 		}
-		else if (b->y == 1)
-		{
-			main();
-		}
 	}
 	else if (b->n == ESQUERDA_DESCE)
 	{
-		if (b->x < ALTURA - 2)
+		if (b->y == 0)
+		{
+			main();
+		}
+		else if (b->x < ALTURA - 2)
 		{
 			movBall_left_down(tela, b);
 		}
@@ -325,23 +326,22 @@ void move_ball(char tela[ALTURA][LARGURA], Bola *b, Raquete1 *r1, Raquete2 *r2)
 		}
 		else if (tela[b->x][b->y] == tela[r2->topo][2])
 		{
-			b->n = DIREITA_SOBE;
+			b->n = DIREITA_DESCE;
 			movBall_right_up(tela, b);
 		}
 		else if (tela[b->x][b->y] == tela[r2->base][2])
 		{
-			b->n = DIREITA_DESCE;
+			b->n = DIREITA_SOBE;
 			movBall_right_down(tela, b);
 		}
-		else if (b->y == 2)
-		{
-			main();
-		}
-
 	}
 	else if (b->n == DIREITA_SOBE)
 	{
-		if (b->x > 1)
+		if (b->y == LARGURA)
+		{
+			main();
+		}
+		else if (b->x > 1)
 		{
 			movBall_right_up(tela, b);
 		}
@@ -365,14 +365,14 @@ void move_ball(char tela[ALTURA][LARGURA], Bola *b, Raquete1 *r1, Raquete2 *r2)
 			b->n = ESQUERDA_DESCE;
 			movBall_left_down(tela, b);
 		}
-		else if (b->y == LARGURA - 1)
-		{
-			main();
-		}
 	}
 	else if (b->n == DIREITA_DESCE)
 	{
-		if (b->x < ALTURA - 2)
+		if (b->y == LARGURA)
+		{
+		main();
+		}
+		else if (b->x < ALTURA - 2)
 		{
 			movBall_right_down(tela, b);
 		}
@@ -395,10 +395,6 @@ void move_ball(char tela[ALTURA][LARGURA], Bola *b, Raquete1 *r1, Raquete2 *r2)
 		{
 			b->n = ESQUERDA_DESCE;
 			movBall_left_down(tela, b);
-		}
-		else if (b->y == LARGURA - 1)
-		{
-			main();
 		}
 	}
 }
@@ -426,9 +422,9 @@ void movRaquete1_down(char tela[ALTURA][LARGURA], Raquete1 *r1)
 	tela[r1->base][LARGURA - 2] = RAQUETE;
 }
 
-void dirRaquetes(char tela[ALTURA][LARGURA], Raquete1 *r1, int dir1,int dir2, Raquete2 *r2)
+void dirRaquetes(char tela[ALTURA][LARGURA], Raquete1 *r1, int dir, Raquete2 *r2)
 {
-	if (dir1 == 'k')
+	if (dir == 'k')
 	{
 		r1->raq1 = SOBE;
 		if (tela[r1->topo][LARGURA - 2] != tela[1][LARGURA - 2])
@@ -436,7 +432,7 @@ void dirRaquetes(char tela[ALTURA][LARGURA], Raquete1 *r1, int dir1,int dir2, Ra
 			movRaquete1_up(tela, r1);
 		}
 	}
-	else if (dir1 == 'm')
+	else if (dir == 'm')
 	{
 		r1->raq1 = DESCE;
 		if (tela[r1->base][LARGURA - 2] != tela[ALTURA - 2][LARGURA - 2])
@@ -444,7 +440,7 @@ void dirRaquetes(char tela[ALTURA][LARGURA], Raquete1 *r1, int dir1,int dir2, Ra
 			movRaquete1_down(tela, r1);
 		}
 	}
-	else if (dir1 == 'a')
+	else if (dir == 'a')
 	{
 		r2->raq2 = SOBE;
 		if (tela[r2->topo][1] != tela[1][1])
@@ -452,7 +448,7 @@ void dirRaquetes(char tela[ALTURA][LARGURA], Raquete1 *r1, int dir1,int dir2, Ra
 			movRaquete2_up(tela, r2);
 		}
 	}
-	else if (dir1 == 'z')
+	else if (dir == 'z')
 	{
 		r2->raq2 = DESCE;
 		if (tela[r2->base][1] != tela[ALTURA - 2][1])
