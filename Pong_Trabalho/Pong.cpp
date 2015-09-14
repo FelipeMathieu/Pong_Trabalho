@@ -1,7 +1,9 @@
 #include <stdlib.h>
 #include <conio.h>
-#include <Windows.h>
 #include <stdio.h>
+#include <Windows.h>
+#include <iostream>
+#include <mmsystem.h>
 
 #define ALTURA 25
 #define LARGURA 71
@@ -15,6 +17,11 @@
 #define BORDA_SUPERIOR_DIREITA 187
 #define BORDA_INFERIOR_ESQUERDA 200
 #define BORDA_INFERIOR_DIREITA 188
+#define ESC 27
+
+#define ERROU PlaySound(TEXT("errou.wav"), NULL, SND_ASYNC)
+#define BOLA_RAQUETE PlaySound(TEXT("batida.wav"), NULL, SND_ASYNC)
+#define INTRO PlaySound(TEXT("intro.wav"), NULL, SND_ASYNC)
 
 #define limpa_tela() system("cls")
 #define dorme(millis) Sleep(millis)
@@ -72,16 +79,19 @@ int main(void)
 	Raquete1 r1;
 	Raquete2 r2;
 	int dir;
+	//HANDLE myHandle = 0;
 
 	inicia(tela, &b, &r1, &r2);
-	
+
 	while (1) 
 	{
 		limpa_tela();
 		desenha_tela(tela);
 		if (_kbhit())
 		{
+			
 			dir = _getch();
+			//myHandle = CreateThread(NULL, 0, dirRaquetes, tela, &r1, dir, &r2, 0, NULL);
 			dirRaquetes(tela, &r1, dir, &r2);
 		}
 		move_ball(tela, &b, &r1, &r2);
@@ -113,6 +123,7 @@ void inicia(char tela[ALTURA][LARGURA], Bola *b, Raquete1 *r1, Raquete2 *r2)
 		for (j = 0; j < LARGURA; j++)
 		{
 			tela[i][j] = HORIZONTAL;
+			
 		}
 	}
 	for (i = 0; i < ALTURA - 1; i++)
@@ -129,7 +140,7 @@ void inicia(char tela[ALTURA][LARGURA], Bola *b, Raquete1 *r1, Raquete2 *r2)
 			tela[i][j] = ESPACO;
 		}
 	}
-
+	
 	tela[0][0] = BORDA_SUPERIO_ESQUERDA;
 	tela[0][LARGURA - 1] = BORDA_SUPERIOR_DIREITA;
 	tela[ALTURA - 1][0] = BORDA_INFERIOR_ESQUERDA;
@@ -226,16 +237,21 @@ void movBall_right_up(char tela[ALTURA][LARGURA], Bola *b)
 void move_ball(char tela[ALTURA][LARGURA], Bola *b, Raquete1 *r1, Raquete2 *r2)
 {
 	
+	//Reprogramar a colisão.
+
 	if (b->n == DIREITA)
 	{
 		movBall_right(tela, b);
 		if (b->y == LARGURA - 1)
 		{
+			ERROU;
 			main();
 		}
 		else if (tela[b->x][b->y] == tela[r1->centro][LARGURA - 3])
 		{
+			
 			b->n = ESQUERDA;
+			BOLA_RAQUETE;
 			movBall_left(tela, b);
 		}
 		else if (tela[b->x][b->y] == tela[r1->topo][LARGURA - 3])
@@ -255,11 +271,13 @@ void move_ball(char tela[ALTURA][LARGURA], Bola *b, Raquete1 *r1, Raquete2 *r2)
 		movBall_left(tela, b);
 		if (b->y == 1)
 		{
+			ERROU;
 			main();
 		}
 		else if (tela[b->x][b->y] == tela[r2->centro][2])
 		{
 			b->n = DIREITA;
+			BOLA_RAQUETE;
 			movBall_right(tela, b);
 		}
 		else if (tela[b->x][b->y] == tela[r2->topo][2])
@@ -455,6 +473,10 @@ void dirRaquetes(char tela[ALTURA][LARGURA], Raquete1 *r1, int dir, Raquete2 *r2
 		{
 			movRaquete2_down(tela, r2);
 		}
+	}
+	else if (dir == ESC)
+	{
+		exit(0);
 	}
 }
 
