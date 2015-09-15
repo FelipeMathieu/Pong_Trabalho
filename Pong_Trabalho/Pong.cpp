@@ -234,11 +234,6 @@ void movBall_right_up(char tela[ALTURA][LARGURA], Bola *b)
 
 void move_ball(char tela[ALTURA][LARGURA], Bola *b, Raquete1 *r1, Raquete2 *r2)
 {
-	/*srand(time(NULL));
-	Direcao d1 = (Direcao)(rand() % (int)(ESQUERDA_DESCE));
-	srand(time(NULL));
-	Direcao d2 = (Direcao)(rand() % (int)(DIREITA_DESCE || DIREITA_SOBE || DIREITA));*/
-
 	if (b->n == DIREITA)
 	{
 		if (tela[b->x][b->y] != tela[r1->centro][LARGURA - 3])
@@ -326,9 +321,24 @@ void move_ball(char tela[ALTURA][LARGURA], Bola *b, Raquete1 *r1, Raquete2 *r2)
 
 		if (tela[b->x][b->y] == tela[r2->centro][2])
 		{
-			b->n = DIREITA;
-			BOLA_RAQUETE;
-			movBall_right(tela, b);
+			if (r2->centro < ALTURA / 2)
+			{
+				b->n = DIREITA_DESCE;
+				BOLA_RAQUETE;
+				movBall_right_down(tela, b);
+			}
+			else if (r2->centro > ALTURA / 2)
+			{
+				b->n = DIREITA_SOBE;
+				BOLA_RAQUETE;
+				movBall_right_up(tela, b);
+			}
+			else if (r2->centro == ALTURA / 2)
+			{
+				b->n = DIREITA;
+				BOLA_RAQUETE;
+				movBall_right(tela, b);
+			}
 		}
 		else if (tela[b->x][b->y] == tela[r2->base][2])
 		{
@@ -364,9 +374,24 @@ void move_ball(char tela[ALTURA][LARGURA], Bola *b, Raquete1 *r1, Raquete2 *r2)
 
 		if (tela[b->x][b->y] == tela[r2->centro][2])
 		{
-			b->n = DIREITA;
-			BOLA_RAQUETE;
-			movBall_right(tela, b);
+			if (r2->centro < ALTURA / 2)
+			{
+				b->n = DIREITA_DESCE;
+				BOLA_RAQUETE;
+				movBall_right_down(tela, b);
+			}
+			else if (r2->centro > ALTURA / 2)
+			{
+				b->n = DIREITA_SOBE;
+				BOLA_RAQUETE;
+				movBall_right_up(tela, b);
+			}
+			else if (r2->centro == ALTURA / 2)
+			{
+				b->n = DIREITA;
+				BOLA_RAQUETE;
+				movBall_right(tela, b);
+			}
 		}
 		else if (tela[b->x][b->y] == tela[r2->base][2])
 		{
@@ -434,7 +459,6 @@ void move_ball(char tela[ALTURA][LARGURA], Bola *b, Raquete1 *r1, Raquete2 *r2)
 			movBall_left_down(tela, b);
 		}
 	}
-
 	else if (b->n == DIREITA_DESCE)
 	{
 		if (b->x < ALTURA - 2)
@@ -477,7 +501,6 @@ void move_ball(char tela[ALTURA][LARGURA], Bola *b, Raquete1 *r1, Raquete2 *r2)
 		}
 		else if (tela[b->x][b->y] == tela[r1->topo][LARGURA - 3])
 		{
-
 			b->n = ESQUERDA_SOBE;
 			BOLA_RAQUETE;
 			movBall_left_up(tela, b);
