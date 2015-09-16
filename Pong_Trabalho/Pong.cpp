@@ -6,7 +6,7 @@
 #include <time.h>
 
 #define ALTURA 25
-#define LARGURA 50
+#define LARGURA 55
 
 #define VERTICAL 186
 #define HORIZONTAL 205
@@ -28,13 +28,13 @@
 
 typedef enum direcao {
 	DIREITA,
+	ESQUERDA,
+	SOBE,
+	DESCE,
 	DIREITA_SOBE,
 	DIREITA_DESCE,
-	ESQUERDA,
 	ESQUERDA_SOBE,
-	ESQUERDA_DESCE,
-	SOBE,
-	DESCE
+	ESQUERDA_DESCE
 }Direcao;
 
 typedef struct bola {
@@ -115,7 +115,6 @@ void desenha_tela(char tela[ALTURA][LARGURA])
 void inicia(char tela[ALTURA][LARGURA], Bola *b, Raquete1 *r1, Raquete2 *r2)
 {
 	int i, j, k;
-
 	for (i = 0; i < ALTURA; i += (ALTURA - 1))
 	{
 		for (j = 0; j < LARGURA; j++)
@@ -149,7 +148,7 @@ void inicia(char tela[ALTURA][LARGURA], Bola *b, Raquete1 *r1, Raquete2 *r2)
 	tela[i][j] = BOLA;
 	b->x = i;
 	b->y = j;
-	b->n = DIREITA;
+	b->n = (Direcao)(rand() % 2);
 
 	i = (ALTURA / 2);
 	j = (ALTURA / 2) - 1;
@@ -261,7 +260,7 @@ void move_ball(char tela[ALTURA][LARGURA], Bola *b, Raquete1 *r1, Raquete2 *r2)
 			movBall_left_down(tela, b);
 		}
 
-		if (b->y == LARGURA - 2)
+		if (b->y == LARGURA)
 		{
 			ERROU;
 			main();
@@ -294,7 +293,7 @@ void move_ball(char tela[ALTURA][LARGURA], Bola *b, Raquete1 *r1, Raquete2 *r2)
 			movBall_right_down(tela, b);
 		}
 
-		if (b->y == 1)
+		if (b->y == 0)
 		{
 			ERROU;
 			main();
@@ -313,7 +312,7 @@ void move_ball(char tela[ALTURA][LARGURA], Bola *b, Raquete1 *r1, Raquete2 *r2)
 			movBall_left_down(tela, b);
 		}
 
-		if (b->y == 1 || b->x == BORDA_SUPERIO_ESQUERDA || b->x == BORDA_INFERIOR_ESQUERDA)
+		if (b->y == 0 || b->x == BORDA_SUPERIO_ESQUERDA || b->x == BORDA_INFERIOR_ESQUERDA)
 		{
 			ERROU;
 			main();
@@ -366,7 +365,7 @@ void move_ball(char tela[ALTURA][LARGURA], Bola *b, Raquete1 *r1, Raquete2 *r2)
 			movBall_left_up(tela, b);
 		}
 
-		if (b->y == 1 || b->x == BORDA_SUPERIO_ESQUERDA || b->x == BORDA_INFERIOR_ESQUERDA)
+		if (b->y == 0 || b->x == BORDA_SUPERIO_ESQUERDA || b->x == BORDA_INFERIOR_ESQUERDA)
 		{
 			ERROU;
 			main();
@@ -419,7 +418,7 @@ void move_ball(char tela[ALTURA][LARGURA], Bola *b, Raquete1 *r1, Raquete2 *r2)
 			movBall_right_down(tela, b);
 		}
 
-		if (b->y == LARGURA - 1 || b->x == BORDA_SUPERIOR_DIREITA|| b->x == BORDA_INFERIOR_DIREITA)
+		if (b->y == LARGURA || b->x == BORDA_SUPERIOR_DIREITA|| b->x == BORDA_INFERIOR_DIREITA)
 		{
 			ERROU;
 			main();
@@ -472,7 +471,7 @@ void move_ball(char tela[ALTURA][LARGURA], Bola *b, Raquete1 *r1, Raquete2 *r2)
 			movBall_right_up(tela, b);
 		}
 
-		if (b->y == LARGURA - 1 || b->x == BORDA_SUPERIOR_DIREITA || b->x == BORDA_INFERIOR_DIREITA)
+		if (b->y == LARGURA || b->x == BORDA_SUPERIOR_DIREITA || b->x == BORDA_INFERIOR_DIREITA)
 		{
 			ERROU;
 			main();
