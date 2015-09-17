@@ -22,7 +22,7 @@
 
 #define ERROU PlaySound(TEXT("errou.wav"), NULL, SND_ASYNC)
 #define BOLA_RAQUETE PlaySound(TEXT("batida.wav"), NULL, SND_ASYNC)
-#define INTRO PlaySound(TEXT("intro.wav"), NULL, SND_LOOP || SND_ASYNC)
+#define INTRO PlaySound(TEXT("intro.wav"), NULL, SND_LOOP | SND_ASYNC)
 
 #define limpa_tela() system("cls")
 #define dorme(millis) Sleep(millis)
@@ -86,24 +86,44 @@ int main()
 	Raquete2 r2;
 	int dir, pause = 0;
 	Score s;
+	int i, j;
+	HANDLE c;
 
-	PTHREAD_START_ROUTINE();
+	c = GetStdHandle(STD_OUTPUT_HANDLE);
 
 	menu(tela);
+
 	inicia(tela, &b, &r1, &r2, &s);
 
 	while (1)
 	{
-		limpa_tela();
+		COORD cord;
+		cord.X = 0;
+		cord.Y = 0;
+		SetConsoleCursorPosition(GetStdHandle(STD_OUTPUT_HANDLE), cord);
 		desenha_tela(tela, &r1, &r2);
 		if (_kbhit())
 		{
 			dir = _getch();
 			while (dir == 'p' && pause == 0)
 			{
+				tela[3][24] = 'P';
+				tela[3][25] = 'A';
+				tela[3][26] = 'U';
+				tela[3][27] = 'S';
+				tela[3][28] = 'E';
+
+				SetConsoleCursorPosition(GetStdHandle(STD_OUTPUT_HANDLE), cord);
+				desenha_tela(tela, &r1, &r2);
+
 				dir = _getch();
 				if (dir == 'p')
 				{
+					tela[3][24] = ' ';
+					tela[3][25] = ' ';
+					tela[3][26] = ' ';
+					tela[3][27] = ' ';
+					tela[3][28] = ' ';
 					pause++;
 				}
 				else
@@ -133,18 +153,18 @@ void desenha_tela(char tela[ALTURA][LARGURA], Raquete1 *r1, Raquete2 *r2)
 			if (tela[i][j] == tela[r1->centro][LARGURA - 2])
 			{
 				SetConsoleTextAttribute(hConsole, 1);
-				printf("%c", tela[i][j]);
+				putchar(tela[i][j]);
 			}
 			else
 			{
 				SetConsoleTextAttribute(hConsole, 4);
-				printf("%c", tela[i][j]);
+				putchar(tela[i][j]);
 			}
 		}
 
 		if (i != ALTURA - 1 && j != LARGURA - 1)
 		{
-			printf("\n");
+			putchar('\n');
 		}
 	}
 }
@@ -223,7 +243,7 @@ void inicia(char tela[ALTURA][LARGURA], Bola *b, Raquete1 *r1, Raquete2 *r2, Sco
 	tela[1][LARGURA - 5] = '=';
 	tela[1][LARGURA - 3] = s->score2;
 
-	if (s->score1 == '10' || s->score2 == '10')
+	if (s->score1 == 58 || s->score2 == 58)
 	{
 		main();
 	}
@@ -344,21 +364,20 @@ void menu(char tela[ALTURA][LARGURA])
 	tela[17][32] = 'r';
 
 	limpa_tela();
+	INTRO;
 	SetConsoleTextAttribute(hC, 8);
 	for (i = 0; i < ALTURA; i++)
 	{
 		for (j = 0; j < LARGURA; j++)
 		{
-			printf("%c", tela[i][j]);
+			putchar(tela[i][j]);
 		}
 
 		if (i != ALTURA - 1 && j != LARGURA - 1)
 		{
-			printf("\n");
+			putchar('\n');
 		}
 	}
-
-	INTRO;
 
 	while (m != 13)
 	{
@@ -439,7 +458,7 @@ void move_ball(char tela[ALTURA][LARGURA], Bola *b, Raquete1 *r1, Raquete2 *r2, 
 		{
 			movBall_right(tela, b);
 		}
-		else
+		else if(tela[b->x][b->y] == tela[r1->centro][LARGURA - 3])
 		{
 			b->n = ESQUERDA;
 			BOLA_RAQUETE;
