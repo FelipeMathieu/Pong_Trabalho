@@ -30,12 +30,12 @@
 typedef enum direcao {
 	DIREITA,
 	ESQUERDA,
-	SOBE,
-	DESCE,
 	DIREITA_SOBE,
-	DIREITA_DESCE,
 	ESQUERDA_SOBE,
-	ESQUERDA_DESCE
+	DIREITA_DESCE,
+	ESQUERDA_DESCE,
+	SOBE,
+	DESCE
 }Direcao;
 
 typedef struct bola {
@@ -451,7 +451,6 @@ void movBall_right_up(char tela[ALTURA][LARGURA], Bola *b)
 
 void move_ball(char tela[ALTURA][LARGURA], Bola *b, Raquete1 *r1, Raquete2 *r2, Score *s)
 {
-	int x;
 	if (b->n == DIREITA)
 	{
 		if (tela[b->x][b->y] != tela[r1->centro][LARGURA - 3])
@@ -464,21 +463,18 @@ void move_ball(char tela[ALTURA][LARGURA], Bola *b, Raquete1 *r1, Raquete2 *r2, 
 			BOLA_RAQUETE;
 			movBall_left(tela, b);
 		}
-
 		if (tela[b->x][b->y] == tela[r1->topo][LARGURA - 3])
 		{
 			b->n = ESQUERDA_SOBE;
 			BOLA_RAQUETE;
 			movBall_left_up(tela, b);
 		}
-
 		if (tela[b->x][b->y] == tela[r1->base][LARGURA - 3])
 		{
 			b->n = ESQUERDA_DESCE;
 			BOLA_RAQUETE;
 			movBall_left_down(tela, b);
 		}
-
 		if (b->y == LARGURA)
 		{
 			ERROU;
@@ -498,21 +494,18 @@ void move_ball(char tela[ALTURA][LARGURA], Bola *b, Raquete1 *r1, Raquete2 *r2, 
 			BOLA_RAQUETE;
 			movBall_right(tela, b);
 		}
-		
 		if (tela[b->x][b->y] == tela[r2->topo][2])
 		{
 			b->n = DIREITA_SOBE;
 			BOLA_RAQUETE;
 			movBall_right_up(tela, b);
 		}
-
 		if (tela[b->x][b->y] == tela[r2->base][2])
 		{
 			b->n = DIREITA_DESCE;
 			BOLA_RAQUETE;
 			movBall_right_down(tela, b);
 		}
-
 		if (b->y == 0)
 		{
 			ERROU;
@@ -532,46 +525,124 @@ void move_ball(char tela[ALTURA][LARGURA], Bola *b, Raquete1 *r1, Raquete2 *r2, 
 			BOLA_RAQUETE;
 			movBall_left_down(tela, b);
 		}
-
 		if (b->y == 0 || b->x == BORDA_SUPERIO_ESQUERDA || b->x == BORDA_INFERIOR_ESQUERDA)
 		{
 			ERROU;
 			s->score2++;
 			inicia(tela, b, r1, r2, s);
 		}
-
 		if (tela[b->x][b->y] == tela[r2->centro][2])
 		{
 			if (r2->centro < ALTURA / 2)
+			{
+				b->n = (Direcao)(rand() % 6);
+				if (b->n == 4 || b->n == 5)
+				{
+					b->n = DIREITA_DESCE;
+					BOLA_RAQUETE;
+					movBall_right_down(tela, b);
+				}
+				else if (b->n == 2 || b->n == 3)
+				{
+					b->n = DIREITA_SOBE;
+					BOLA_RAQUETE;
+					movBall_right_up(tela, b);
+				}
+				else if (b->n == 0 || b->n == 1)
+				{
+					b->n = DIREITA;
+					BOLA_RAQUETE;
+					movBall_right(tela, b);
+				}
+			}
+			else if (r2->centro > ALTURA / 2)
+			{
+				b->n = (Direcao)(rand() % 6);
+				if (b->n == 4 || b->n == 5)
+				{
+					b->n = DIREITA_DESCE;
+					BOLA_RAQUETE;
+					movBall_right_down(tela, b);
+				}
+				else if (b->n == 2 || b->n == 3)
+				{
+					b->n = DIREITA_SOBE;
+					BOLA_RAQUETE;
+					movBall_right_up(tela, b);
+				}
+				else if (b->n == 0 || b->n == 1)
+				{
+					b->n = DIREITA;
+					BOLA_RAQUETE;
+					movBall_right(tela, b);
+				}
+			}
+			else if (r2->centro == ALTURA / 2)
+			{
+				b->n = (Direcao)(rand() % 6);
+				if (b->n == 4 || b->n == 5)
+				{
+					b->n = DIREITA_DESCE;
+					BOLA_RAQUETE;
+					movBall_right_down(tela, b);
+				}
+				else if (b->n == 2 || b->n == 3)
+				{
+					b->n = DIREITA_SOBE;
+					BOLA_RAQUETE;
+					movBall_right_up(tela, b);
+				}
+				else if (b->n == 0 || b->n == 1)
+				{
+					b->n = DIREITA;
+					BOLA_RAQUETE;
+					movBall_right(tela, b);
+				}
+			}
+		}
+		else if (tela[b->x][b->y] == tela[r2->base][2])
+		{
+			b->n = (Direcao)(rand() % 6);
+			if (b->n == 4 || b->n == 5)
 			{
 				b->n = DIREITA_DESCE;
 				BOLA_RAQUETE;
 				movBall_right_down(tela, b);
 			}
-			else if (r2->centro > ALTURA / 2)
+			else if (b->n == 2 || b->n == 3)
 			{
 				b->n = DIREITA_SOBE;
 				BOLA_RAQUETE;
 				movBall_right_up(tela, b);
 			}
-			else if (r2->centro == ALTURA / 2)
+			else if (b->n == 0 || b->n == 1)
 			{
 				b->n = DIREITA;
 				BOLA_RAQUETE;
 				movBall_right(tela, b);
 			}
 		}
-		else if (tela[b->x][b->y] == tela[r2->base][2])
-		{
-			b->n = DIREITA_DESCE;
-			BOLA_RAQUETE;
-			movBall_right_down(tela, b);
-		}
 		else if (tela[b->x][b->y] == tela[r2->topo][2])
 		{
-			b->n = DIREITA_SOBE;
-			BOLA_RAQUETE;
-			movBall_right_up(tela, b);
+			b->n = (Direcao)(rand() % 6);
+			if (b->n == 4 || b->n == 5)
+			{
+				b->n = DIREITA_DESCE;
+				BOLA_RAQUETE;
+				movBall_right_down(tela, b);
+			}
+			else if (b->n == 2 || b->n == 3)
+			{
+				b->n = DIREITA_SOBE;
+				BOLA_RAQUETE;
+				movBall_right_up(tela, b);
+			}
+			else if (b->n == 0 || b->n == 1)
+			{
+				b->n = DIREITA;
+				BOLA_RAQUETE;
+				movBall_right(tela, b);
+			}
 		}
 	}
 	else if (b->n == ESQUERDA_DESCE)
@@ -586,46 +657,124 @@ void move_ball(char tela[ALTURA][LARGURA], Bola *b, Raquete1 *r1, Raquete2 *r2, 
 			BOLA_RAQUETE;
 			movBall_left_up(tela, b);
 		}
-
 		if (b->y == 0 || b->x == BORDA_SUPERIO_ESQUERDA || b->x == BORDA_INFERIOR_ESQUERDA)
 		{
 			ERROU;
 			s->score2++;
 			inicia(tela, b, r1, r2, s);
 		}
-
 		if (tela[b->x][b->y] == tela[r2->centro][2])
 		{
 			if (r2->centro < ALTURA / 2)
+			{
+				b->n = (Direcao)(rand() % 6);
+				if (b->n == 4 || b->n == 5)
+				{
+					b->n = DIREITA_DESCE;
+					BOLA_RAQUETE;
+					movBall_right_down(tela, b);
+				}
+				else if (b->n == 2 || b->n == 3)
+				{
+					b->n = DIREITA_SOBE;
+					BOLA_RAQUETE;
+					movBall_right_up(tela, b);
+				}
+				else if (b->n == 0 || b->n == 1)
+				{
+					b->n = DIREITA;
+					BOLA_RAQUETE;
+					movBall_right(tela, b);
+				}
+			}
+			else if (r2->centro > ALTURA / 2)
+			{
+				b->n = (Direcao)(rand() % 6);
+				if (b->n == 4 || b->n == 5)
+				{
+					b->n = DIREITA_DESCE;
+					BOLA_RAQUETE;
+					movBall_right_down(tela, b);
+				}
+				else if (b->n == 2 || b->n == 3)
+				{
+					b->n = DIREITA_SOBE;
+					BOLA_RAQUETE;
+					movBall_right_up(tela, b);
+				}
+				else if (b->n == 0 || b->n == 1)
+				{
+					b->n = DIREITA;
+					BOLA_RAQUETE;
+					movBall_right(tela, b);
+				}
+			}
+			else if (r2->centro == ALTURA / 2)
+			{
+				b->n = (Direcao)(rand() % 6);
+				if (b->n == 4 || b->n == 5)
+				{
+					b->n = DIREITA_DESCE;
+					BOLA_RAQUETE;
+					movBall_right_down(tela, b);
+				}
+				else if (b->n == 2 || b->n == 3)
+				{
+					b->n = DIREITA_SOBE;
+					BOLA_RAQUETE;
+					movBall_right_up(tela, b);
+				}
+				else if (b->n == 0 || b->n == 1)
+				{
+					b->n = DIREITA;
+					BOLA_RAQUETE;
+					movBall_right(tela, b);
+				}
+			}
+		}
+		else if (tela[b->x][b->y] == tela[r2->base][2])
+		{
+			b->n = (Direcao)(rand() % 6);
+			if (b->n == 4 || b->n == 5)
 			{
 				b->n = DIREITA_DESCE;
 				BOLA_RAQUETE;
 				movBall_right_down(tela, b);
 			}
-			else if (r2->centro > ALTURA / 2)
+			else if (b->n == 2 || b->n == 3)
 			{
 				b->n = DIREITA_SOBE;
 				BOLA_RAQUETE;
 				movBall_right_up(tela, b);
 			}
-			else if (r2->centro == ALTURA / 2)
+			else if (b->n == 0 || b->n == 1)
 			{
 				b->n = DIREITA;
 				BOLA_RAQUETE;
 				movBall_right(tela, b);
 			}
 		}
-		else if (tela[b->x][b->y] == tela[r2->base][2])
-		{
-			b->n = DIREITA_DESCE;
-			BOLA_RAQUETE;
-			movBall_right_down(tela, b);
-		}
 		else if (tela[b->x][b->y] == tela[r2->topo][2])
 		{
-			b->n = DIREITA_SOBE;
-			BOLA_RAQUETE;
-			movBall_right_up(tela, b);
+			b->n = (Direcao)(rand() % 6);
+			if (b->n == 4 || b->n == 5)
+			{
+				b->n = DIREITA_DESCE;
+				BOLA_RAQUETE;
+				movBall_right_down(tela, b);
+			}
+			else if (b->n == 2 || b->n == 3)
+			{
+				b->n = DIREITA_SOBE;
+				BOLA_RAQUETE;
+				movBall_right_up(tela, b);
+			}
+			else if (b->n == 0 || b->n == 1)
+			{
+				b->n = DIREITA;
+				BOLA_RAQUETE;
+				movBall_right(tela, b);
+			}
 		}
 	}
 	else if (b->n == DIREITA_SOBE)
@@ -640,46 +789,124 @@ void move_ball(char tela[ALTURA][LARGURA], Bola *b, Raquete1 *r1, Raquete2 *r2, 
 			BOLA_RAQUETE;
 			movBall_right_down(tela, b);
 		}
-
 		if (b->y == LARGURA || b->x == BORDA_SUPERIOR_DIREITA|| b->x == BORDA_INFERIOR_DIREITA)
 		{
 			ERROU;
 			s->score1++;
 			inicia(tela, b, r1, r2, s);
 		}
-
 		if (tela[b->x][b->y] == tela[r1->centro][LARGURA - 3])
 		{
 			if (r1->centro < ALTURA / 2)
+			{
+				b->n = (Direcao)(rand() % 6);
+				if (b->n == 4 || b->n == 5)
+				{
+					b->n = ESQUERDA_DESCE;
+					BOLA_RAQUETE;
+					movBall_left_down(tela, b);
+				}
+				else if (b->n == 2 || b->n == 3)
+				{
+					b->n = ESQUERDA_SOBE;
+					BOLA_RAQUETE;
+					movBall_left_up(tela, b);
+				}
+				else if (b->n == 0 || b->n == 1)
+				{
+					b->n = ESQUERDA;
+					BOLA_RAQUETE;
+					movBall_left(tela, b);
+				}
+			}
+			else if (r1->centro > ALTURA / 2)
+			{
+				b->n = (Direcao)(rand() % 6);
+				if (b->n == 4 || b->n == 5)
+				{
+					b->n = ESQUERDA_DESCE;
+					BOLA_RAQUETE;
+					movBall_left_down(tela, b);
+				}
+				else if (b->n == 2 || b->n == 3)
+				{
+					b->n = ESQUERDA_SOBE;
+					BOLA_RAQUETE;
+					movBall_left_up(tela, b);
+				}
+				else if (b->n == 0 || b->n == 1)
+				{
+					b->n = ESQUERDA;
+					BOLA_RAQUETE;
+					movBall_left(tela, b);
+				}
+			}
+			else if (r1->centro == ALTURA / 2)
+			{
+				b->n = (Direcao)(rand() % 6);
+				if (b->n == 4 || b->n == 5)
+				{
+					b->n = ESQUERDA_DESCE;
+					BOLA_RAQUETE;
+					movBall_left_down(tela, b);
+				}
+				else if (b->n == 2 || b->n == 3)
+				{
+					b->n = ESQUERDA_SOBE;
+					BOLA_RAQUETE;
+					movBall_left_up(tela, b);
+				}
+				else if (b->n == 0 || b->n == 1)
+				{
+					b->n = ESQUERDA;
+					BOLA_RAQUETE;
+					movBall_left(tela, b);
+				}
+			}
+		}
+		else if (tela[b->x][b->y] == tela[r1->topo][LARGURA - 3])
+		{
+			b->n = (Direcao)(rand() % 6);
+			if (b->n == 4 || b->n == 5)
 			{
 				b->n = ESQUERDA_DESCE;
 				BOLA_RAQUETE;
 				movBall_left_down(tela, b);
 			}
-			else if (r1->centro > ALTURA / 2)
+			else if (b->n == 2 || b->n == 3)
 			{
 				b->n = ESQUERDA_SOBE;
 				BOLA_RAQUETE;
 				movBall_left_up(tela, b);
 			}
-			else if (r1->centro == ALTURA / 2)
+			else if (b->n == 0 || b->n == 1)
 			{
 				b->n = ESQUERDA;
 				BOLA_RAQUETE;
 				movBall_left(tela, b);
 			}
 		}
-		else if (tela[b->x][b->y] == tela[r1->topo][LARGURA - 3])
-		{
-			b->n = ESQUERDA_SOBE;
-			BOLA_RAQUETE;
-			movBall_left_up(tela, b);
-		}
 		else if (tela[b->x][b->y] == tela[r1->base][LARGURA - 3])
 		{
-			b->n = ESQUERDA_DESCE;
-			BOLA_RAQUETE;
-			movBall_left_down(tela, b);
+			b->n = (Direcao)(rand() % 6);
+			if (b->n == 4 || b->n == 5)
+			{
+				b->n = ESQUERDA_DESCE;
+				BOLA_RAQUETE;
+				movBall_left_down(tela, b);
+			}
+			else if (b->n == 2 || b->n == 3)
+			{
+				b->n = ESQUERDA_SOBE;
+				BOLA_RAQUETE;
+				movBall_left_up(tela, b);
+			}
+			else if (b->n == 0 || b->n == 1)
+			{
+				b->n = ESQUERDA;
+				BOLA_RAQUETE;
+				movBall_left(tela, b);
+			}
 		}
 	}
 	else if (b->n == DIREITA_DESCE)
@@ -694,46 +921,124 @@ void move_ball(char tela[ALTURA][LARGURA], Bola *b, Raquete1 *r1, Raquete2 *r2, 
 			BOLA_RAQUETE;
 			movBall_right_up(tela, b);
 		}
-
 		if (b->y == LARGURA || b->x == BORDA_SUPERIOR_DIREITA || b->x == BORDA_INFERIOR_DIREITA)
 		{
 			ERROU;
 			s->score1++;
 			inicia(tela, b, r1, r2, s);
 		}
-
 		if (tela[b->x][b->y] == tela[r1->centro][LARGURA - 3])
 		{
 			if (r1->centro < ALTURA / 2)
+			{
+				b->n = (Direcao)(rand() % 6);
+				if (b->n == 4 || b->n == 5)
+				{
+					b->n = ESQUERDA_DESCE;
+					BOLA_RAQUETE;
+					movBall_left_down(tela, b);
+				}
+				else if (b->n == 2 || b->n == 3)
+				{
+					b->n = ESQUERDA_SOBE;
+					BOLA_RAQUETE;
+					movBall_left_up(tela, b);
+				}
+				else if (b->n == 0 || b->n == 1)
+				{
+					b->n = ESQUERDA;
+					BOLA_RAQUETE;
+					movBall_left(tela, b);
+				}
+			}
+			else if (r1->centro > ALTURA / 2)
+			{
+				b->n = (Direcao)(rand() % 6);
+				if (b->n == 4 || b->n == 5)
+				{
+					b->n = ESQUERDA_DESCE;
+					BOLA_RAQUETE;
+					movBall_left_down(tela, b);
+				}
+				else if (b->n == 2 || b->n == 3)
+				{
+					b->n = ESQUERDA_SOBE;
+					BOLA_RAQUETE;
+					movBall_left_up(tela, b);
+				}
+				else if (b->n == 0 || b->n == 1)
+				{
+					b->n = ESQUERDA;
+					BOLA_RAQUETE;
+					movBall_left(tela, b);
+				}
+			}
+			else if (r1->centro == ALTURA / 2)
+			{
+				b->n = (Direcao)(rand() % 6);
+				if (b->n == 4 || b->n == 5)
+				{
+					b->n = ESQUERDA_DESCE;
+					BOLA_RAQUETE;
+					movBall_left_down(tela, b);
+				}
+				else if (b->n == 2 || b->n == 3)
+				{
+					b->n = ESQUERDA_SOBE;
+					BOLA_RAQUETE;
+					movBall_left_up(tela, b);
+				}
+				else if (b->n == 0 || b->n == 1)
+				{
+					b->n = ESQUERDA;
+					BOLA_RAQUETE;
+					movBall_left(tela, b);
+				}
+			}
+		}
+		else if (tela[b->x][b->y] == tela[r1->topo][LARGURA - 3])
+		{
+			b->n = (Direcao)(rand() % 6);
+			if (b->n == 4 || b->n == 5)
 			{
 				b->n = ESQUERDA_DESCE;
 				BOLA_RAQUETE;
 				movBall_left_down(tela, b);
 			}
-			else if (r1->centro > ALTURA / 2)
+			else if (b->n == 2 || b->n == 3)
 			{
 				b->n = ESQUERDA_SOBE;
 				BOLA_RAQUETE;
 				movBall_left_up(tela, b);
 			}
-			else if (r1->centro == ALTURA / 2)
+			else if (b->n == 0 || b->n == 1)
 			{
 				b->n = ESQUERDA;
 				BOLA_RAQUETE;
 				movBall_left(tela, b);
 			}
 		}
-		else if (tela[b->x][b->y] == tela[r1->topo][LARGURA - 3])
-		{
-			b->n = ESQUERDA_SOBE;
-			BOLA_RAQUETE;
-			movBall_left_up(tela, b);
-		}
 		else if (tela[b->x][b->y] == tela[r1->base][LARGURA - 3])
 		{
-			b->n = ESQUERDA_DESCE;
-			BOLA_RAQUETE;
-			movBall_left_down(tela, b);
+			b->n = (Direcao)(rand() % 6);
+			if (b->n == 4 || b->n == 5)
+			{
+				b->n = ESQUERDA_DESCE;
+				BOLA_RAQUETE;
+				movBall_left_down(tela, b);
+			}
+			else if (b->n == 2 || b->n == 3)
+			{
+				b->n = ESQUERDA_SOBE;
+				BOLA_RAQUETE;
+				movBall_left_up(tela, b);
+			}
+			else if (b->n == 0 || b->n == 1)
+			{
+				b->n = ESQUERDA;
+				BOLA_RAQUETE;
+				movBall_left(tela, b);
+			}
 		}
 	}
 }
