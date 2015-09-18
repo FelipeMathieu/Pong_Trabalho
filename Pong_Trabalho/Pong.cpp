@@ -1048,12 +1048,6 @@ void movRaquete1_up(char tela[ALTURA][LARGURA], Raquete1 *r1)
 		tela[r1->centro][LARGURA - 2] = RAQUETE;
 		tela[r1->topo][LARGURA - 2] = RAQUETE;
 		tela[r1->base][LARGURA - 2] = ESPACO;
-		r1->topo--;
-		r1->centro--;
-		r1->base--;
-		tela[r1->topo][LARGURA - 2] = RAQUETE;
-		tela[r1->centro][LARGURA - 2] = RAQUETE;
-		tela[r1->topo][LARGURA - 2] = RAQUETE;
 	}
 }
 
