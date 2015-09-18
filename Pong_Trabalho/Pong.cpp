@@ -4,6 +4,8 @@
 #include <Windows.h>
 #include <iostream>
 #include <time.h>
+#include <thread>
+#include <mutex>
 
 #define ALTURA 25
 #define LARGURA 55
@@ -60,6 +62,13 @@ typedef struct score {
 	char score1 = 48, score2 = 48;
 }Score;
 
+typedef struct gambiarra {
+	char *t;
+	Raquete1 R1;
+	int direcao;
+	Raquete2 R2;
+}Gambiarra;
+
 void inicia(char tela[ALTURA][LARGURA], Bola *b, Raquete1 *r1, Raquete2 *r2, Score *s);
 void desenha_tela(char tela[ALTURA][LARGURA], Raquete1 *r1, Raquete2 *r2);
 void menu(char tela[ALTURA][LARGURA]);
@@ -78,6 +87,24 @@ void dirRaquetes(char tela[ALTURA][LARGURA], Raquete1 *r1, int dir, Raquete2 *r2
 void movRaquete2_up(char tela[ALTURA][LARGURA], Raquete2 *r2);
 void movRaquete2_down(char tela[ALTURA][LARGURA], Raquete2 *r2);
 
+/*DWORD WINAPI Thread_no_1(LPVOID lpParam)
+{
+	Gambiarra g1 = *((Gambiarra*)lpParam);
+
+	dirRaquetes(g1.t, &g1.R1, g1.direcao, &g1.R2);
+
+	return 0;
+}
+
+DWORD WINAPI Thread_no_2(LPVOID lpParam)
+{
+	Gambiarra g2 = *((Gambiarra*)lpParam);
+
+	dirRaquetes(g2.t, &g2.R1, g2.direcao, &g2.R2);
+
+	return 0;
+}*/
+
 int main()
 {
 	char tela[ALTURA][LARGURA];
@@ -88,11 +115,11 @@ int main()
 	Score s;
 	int i, j;
 	HANDLE c;
-
+	HANDLE hThread1, hThread2;
+	Gambiarra g;
 	c = GetStdHandle(STD_OUTPUT_HANDLE);
 
 	menu(tela);
-
 	inicia(tela, &b, &r1, &r2, &s);
 
 	while (1)
@@ -134,7 +161,18 @@ int main()
 			pause = 0;
 			dirRaquetes(tela, &r1, dir, &r2);
 		}
+		/*g.t = &tela[0][0];
+		g.R1 = r1;
+		g.direcao = dir;
+		g.R2 = r2;
+
+		hThread1 = CreateThread(NULL, 0, Thread_no_1, &g, 0, NULL);
+		hThread2 = CreateThread(NULL, 0, Thread_no_2, &g, 0, NULL);*/
+
 		move_ball(tela, &b, &r1, &r2, &s);
+
+		/*CloseHandle(hThread1);
+		CloseHandle(hThread2);*/
 	}
 	return 0;
 }
@@ -989,25 +1027,59 @@ void move_ball(char tela[ALTURA][LARGURA], Bola *b, Raquete1 *r1, Raquete2 *r2, 
 
 void movRaquete1_up(char tela[ALTURA][LARGURA], Raquete1 *r1)
 {
-	tela[r1->base][LARGURA - 2] = ESPACO;
-	r1->topo--;
-	r1->centro--;
-	r1->base--;
-	tela[r1->topo][LARGURA - 2] = RAQUETE;
-	tela[r1->centro][LARGURA - 2] = RAQUETE;
-	tela[r1->topo][LARGURA - 2] = RAQUETE;
+	if(r1->centro == ALTURA / 2 || r1->topo == ALTURA / 2 || r1->base == ALTURA / 2)
+	{
+		tela[r1->base][LARGURA - 2] = ESPACO;
+		r1->topo--;
+		r1->centro--;
+		r1->base--;
+		tela[r1->topo][LARGURA - 2] = RAQUETE;
+		tela[r1->centro][LARGURA - 2] = RAQUETE;
+		tela[r1->topo][LARGURA - 2] = RAQUETE;
+	}
+	else
+	{
+		tela[r1->centro][LARGURA - 2] = ESPACO;
+		tela[r1->base][LARGURA - 2] = ESPACO;
+		r1->topo = r1->topo - 2;
+		r1->centro = r1->centro - 2;
+		r1->base = r1->base - 2;
+		tela[r1->topo][LARGURA - 2] = RAQUETE;
+		tela[r1->centro][LARGURA - 2] = RAQUETE;
+		tela[r1->topo][LARGURA - 2] = RAQUETE;
+		tela[r1->base][LARGURA - 2] = ESPACO;
+		r1->topo--;
+		r1->centro--;
+		r1->base--;
+		tela[r1->topo][LARGURA - 2] = RAQUETE;
+		tela[r1->centro][LARGURA - 2] = RAQUETE;
+		tela[r1->topo][LARGURA - 2] = RAQUETE;
+	}
 }
 
 void movRaquete1_down(char tela[ALTURA][LARGURA], Raquete1 *r1)
 {
-	
-	tela[r1->topo][LARGURA - 2] = ESPACO;
-	r1->topo++;
-	r1->centro++;
-	r1->base++;
-	tela[r1->base][LARGURA - 2] = RAQUETE;
-	tela[r1->centro][LARGURA - 2] = RAQUETE;
-	tela[r1->base][LARGURA - 2] = RAQUETE;
+	if (r1->centro == ALTURA / 2 || r1->topo == ALTURA/2 || r1->base == ALTURA/2)
+	{
+		tela[r1->topo][LARGURA - 2] = ESPACO;
+		r1->topo++;
+		r1->centro++;
+		r1->base++;
+		tela[r1->base][LARGURA - 2] = RAQUETE;
+		tela[r1->centro][LARGURA - 2] = RAQUETE;
+		tela[r1->base][LARGURA - 2] = RAQUETE;
+	}
+	else
+	{
+		tela[r1->centro][LARGURA - 2] = ESPACO;
+		tela[r1->topo][LARGURA - 2] = ESPACO;
+		r1->topo = r1->topo + 2;
+		r1->centro = r1->centro + 2;
+		r1->base = r1->base + 2;
+		tela[r1->base][LARGURA - 2] = RAQUETE;
+		tela[r1->centro][LARGURA - 2] = RAQUETE;
+		tela[r1->base][LARGURA - 2] = RAQUETE;
+	}
 }
 
 void dirRaquetes(char tela[ALTURA][LARGURA], Raquete1 *r1, int dir, Raquete2 *r2)
@@ -1052,23 +1124,50 @@ void dirRaquetes(char tela[ALTURA][LARGURA], Raquete1 *r1, int dir, Raquete2 *r2
 
 void movRaquete2_up(char tela[ALTURA][LARGURA], Raquete2 *r2)
 {
-	tela[r2->base][1] = ESPACO;
-	r2->topo--;
-	r2->centro--;
-	r2->base--;
-	tela[r2->topo][1] = RAQUETE;
-	tela[r2->centro][1] = RAQUETE;
-	tela[r2->topo][1] = RAQUETE;
+	if (r2->centro == ALTURA / 2 || r2->topo == ALTURA / 2 || r2->base == ALTURA / 2)
+	{
+		tela[r2->base][1] = ESPACO;
+		r2->topo--;
+		r2->centro--;
+		r2->base--;
+		tela[r2->topo][1] = RAQUETE;
+		tela[r2->centro][1] = RAQUETE;
+		tela[r2->topo][1] = RAQUETE;
+	}
+	else
+	{
+		tela[r2->centro][1] = ESPACO;
+		tela[r2->base][1] = ESPACO;
+		r2->topo = r2->topo - 2;
+		r2->centro = r2->centro - 2;
+		r2->base = r2->base - 2;
+		tela[r2->topo][1] = RAQUETE;
+		tela[r2->centro][1] = RAQUETE;
+		tela[r2->topo][1] = RAQUETE;
+	}
 }
 
 void movRaquete2_down(char tela[ALTURA][LARGURA], Raquete2 *r2)
 {
-
-	tela[r2->topo][1] = ESPACO;
-	r2->topo++;
-	r2->centro++;
-	r2->base++;
-	tela[r2->base][1] = RAQUETE;
-	tela[r2->centro][1] = RAQUETE;
-	tela[r2->base][1] = RAQUETE;
+	if (r2->centro == ALTURA / 2 || r2->topo == ALTURA / 2 || r2->base == ALTURA / 2)
+	{
+		tela[r2->topo][1] = ESPACO;
+		r2->topo++;
+		r2->centro++;
+		r2->base++;
+		tela[r2->base][1] = RAQUETE;
+		tela[r2->centro][1] = RAQUETE;
+		tela[r2->base][1] = RAQUETE;
+	}
+	else
+	{
+		tela[r2->centro][1] = ESPACO;
+		tela[r2->topo][1] = ESPACO;
+		r2->topo = r2->topo + 2;
+		r2->centro = r2->centro + 2;
+		r2->base = r2->base + 2;
+		tela[r2->base][1] = RAQUETE;
+		tela[r2->centro][1] = RAQUETE;
+		tela[r2->base][1] = RAQUETE;
+	}
 }
