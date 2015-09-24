@@ -86,6 +86,8 @@ void movRaquete1_down(char tela[ALTURA][LARGURA], Raquete1 *r1);
 void dirRaquetes(char tela[ALTURA][LARGURA], Raquete1 *r1, int dir, Raquete2 *r2);
 void movRaquete2_up(char tela[ALTURA][LARGURA], Raquete2 *r2);
 void movRaquete2_down(char tela[ALTURA][LARGURA], Raquete2 *r2);
+void dirRaquetes_1Player(char tela[ALTURA][LARGURA], Raquete1 *r1, int dir);
+void move_raquetePC(char tela[ALTURA][LARGURA], Bola *b, Raquete2 *r2);
 
 int main(int player, int n)
 {
@@ -151,10 +153,50 @@ int main(int player, int n)
 	}
 	else if (player == 1)
 	{
-		limpa_tela();
-		printf("Ola Pong!\n\n");
+		inicia(tela, &b, &r1, &r2, &s, player);
 
-		system("pause");
+		while (1)
+		{
+			COORD cord;
+			cord.X = 0;
+			cord.Y = 0;
+			SetConsoleCursorPosition(GetStdHandle(STD_OUTPUT_HANDLE), cord);
+			desenha_tela(tela, &r1, &r2);
+			if (_kbhit())
+			{
+				dir = _getch();
+				while (dir == 'p' && pause == 0)
+				{
+					tela[3][24] = 'P';
+					tela[3][25] = 'A';
+					tela[3][26] = 'U';
+					tela[3][27] = 'S';
+					tela[3][28] = 'E';
+
+					SetConsoleCursorPosition(GetStdHandle(STD_OUTPUT_HANDLE), cord);
+					desenha_tela(tela, &r1, &r2);
+
+					dir = _getch();
+					if (dir == 'p')
+					{
+						tela[3][24] = ' ';
+						tela[3][25] = ' ';
+						tela[3][26] = ' ';
+						tela[3][27] = ' ';
+						tela[3][28] = ' ';
+						pause++;
+					}
+					else
+					{
+						dir = 'p';
+					}
+				}
+				pause = 0;
+				dirRaquetes_1Player(tela, &r1, dir);
+			}
+			move_ball(tela, &b, &r1, &r2, &s);
+			move_raquetePC(tela, &b, &r2);
+		}
 		return 0;
 	}
 }
@@ -293,7 +335,7 @@ void inicia(char tela[ALTURA][LARGURA], Bola *b, Raquete1 *r1, Raquete2 *r2, Sco
 
 		if (s->score1 == 58 || s->score2 == 58)
 		{
-			main(2, 1);
+			main(0, 1);
 		}
 	}
 }
@@ -1390,5 +1432,94 @@ void movRaquete2_down(char tela[ALTURA][LARGURA], Raquete2 *r2)
 		tela[r2->base][1] = RAQUETE;
 		tela[r2->centro][1] = RAQUETE;
 		tela[r2->base][1] = RAQUETE;
+	}
+}
+
+void dirRaquetes_1Player(char tela[ALTURA][LARGURA], Raquete1 *r1, int dir)
+{
+	if (dir == 'k')
+	{
+		r1->raq1 = SOBE;
+		if (tela[r1->topo][LARGURA - 2] != tela[1][LARGURA - 2])
+		{
+			movRaquete1_up(tela, r1);
+		}
+	}
+	else if (dir == 'm')
+	{
+		r1->raq1 = DESCE;
+		if (tela[r1->base][LARGURA - 2] != tela[ALTURA - 2][LARGURA - 2])
+		{
+			movRaquete1_down(tela, r1);
+		}
+	}
+	else if (dir == ESC)
+	{
+		exit(0);
+	}
+}
+
+void move_raquetePC(char tela[ALTURA][LARGURA], Bola *b, Raquete2 *r2) 
+{
+	int f = b->x;
+	if (b->n == ESQUERDA_DESCE)
+	{
+		if (tela[r2->base][1] != tela[ALTURA - 2][1])
+		{
+			movRaquete2_down(tela, r2);
+
+			if (tela[r2->base][1] == tela[ALTURA - 1][1])
+			{
+				if (r2->topo != f)
+				{
+					move_raquetePC(tela, b, r2);
+				}
+			}
+		}
+	}
+	else if (b->n == ESQUERDA_SOBE)
+	{
+		if (tela[r2->topo][1] != tela[1][1])
+		{
+			movRaquete2_up(tela, r2);
+
+			if (tela[r2->topo][1] == tela[0][1])
+			{
+				if (r2->base != f)
+				{
+					move_raquetePC(tela, b, r2);
+				}
+			}
+		}
+	}
+	else if (b->n == ESQUERDA && b->x > ALTURA / 2)
+	{
+		if (tela[r2->base][1] != tela[ALTURA - 2][1])
+		{
+			movRaquete2_down(tela, r2);
+
+			if (tela[r2->base][1] == tela[ALTURA - 1][1])
+			{
+				if (r2->centro == f)
+				{
+					move_raquetePC(tela, b, r2);
+				}
+			}
+		}
+	}
+	else if (b->n == ESQUERDA && b->x < ALTURA / 2)
+	{
+		if (tela[r2->topo][1] != tela[1][1])
+		{
+			movRaquete2_up(tela, r2);
+
+			if (tela[r2->topo][1] == tela[0][1])
+			{
+				if (r2->centro == f)
+				{
+					move_raquetePC(tela, b, r2);
+				}
+			}
+		}
 	}
 }
