@@ -101,18 +101,9 @@ int main(int player, int n)
 	{
 		inicia(tela, &b, &r1, &r2, &s, 0);
 	}
-	else if(player == 1)
-	{
-
-		goto inicio_2Players;
-	}
 	else if (player == 2)
 	{
-		goto inicio_1Player;
-	}
-	
-	inicio_2Players:
-	{
+
 		inicia(tela, &b, &r1, &r2, &s, player);
 
 		while (1)
@@ -156,14 +147,16 @@ int main(int player, int n)
 			}
 			move_ball(tela, &b, &r1, &r2, &s);
 		}
+		return 0;
 	}
-
-	inicio_1Player:
+	else if (player == 1)
 	{
 		limpa_tela();
-		printf("Ola");
+		printf("Ola Pong!\n\n");
+
+		system("pause");
+		return 0;
 	}
-	return 0;
 }
 
 void desenha_tela(char tela[ALTURA][LARGURA], Raquete1 *r1, Raquete2 *r2)
@@ -559,7 +552,8 @@ void playerMenu(char tela[ALTURA][LARGURA])
 		}
 	}
 
-	i =0;
+	i = 0;
+	j = 0;
 
 	do
 	{
@@ -594,20 +588,22 @@ void playerMenu(char tela[ALTURA][LARGURA])
 		
 		if (m == ENTER)
 		{
-			if (tela[10][21] == SETA)
+			if (tela[10][21] != ESPACO)
 			{
-				i = 1;
+				j = 1;
+				i++;
 			}
-			else if (tela[12][21] == SETA)
-			{
-				i = 2;
+			else if (tela[12][21] != ESPACO)
+			{  
+				j = 2;
+				i++;
 			}
 		}
 
 		continue;
 	} while (i != 1 && i != 2);
 
-	main(i, 1);
+	main(j, 1);
 }
 
 void movBall_up(char tela[ALTURA][LARGURA], Bola *b)
