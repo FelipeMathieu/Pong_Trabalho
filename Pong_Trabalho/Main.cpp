@@ -1,7 +1,26 @@
 /*Nome: Felipe Vignoli Mathieu
   Nome: Vinicios Coelho
   Ciências da computação, 2º Período, matutino
-  Game Pong*/
+  Game Pong
+  
+  MANUAL:
+  Player 1:
+'a' -> SOBE
+'z' -> DESCE
+
+Player 2:
+'k' -> SOBE
+'m' -> DESCE
+
+Comando no jogo:
+'p' -> PAUSE e UNPAUSE
+ESC -> EXIT
+
+SOBRE O JOGO:
+De acordo com o que foi pedido pelo professor, tudo foi implementado corretamente. Mas
+por conversar tidas com o mesmo em sala de aula, foi dada a ideia, para deixar o jogo 
+mais dinâmico, que a direção que a bola pega-se ao colidir com a raquete fosse aleatória, 
+então isso foi feito.*/
 
 #include "Pong.h"
 

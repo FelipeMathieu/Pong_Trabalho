@@ -1,0 +1,11 @@
+Player 1:
+'a' -> SOBE
+'z' -> DESCE
+
+Player 2:
+'k' -> SOBE
+'m' -> DESCE
+
+Comando no jogo:
+'p' -> PAUSE e UNPAUSE
+ESC -> EXIT
